@@ -1,0 +1,41 @@
+.card {
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.conflict {
+  border-color: #ff4d4f !important;
+  background-color: #fff1f0 !important;
+}
+
+.normal {
+  border-color: #d9d9d9;
+  background-color: #fff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.meetingName {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.time {
+  color: rgba(0, 0, 0, 0.45);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}

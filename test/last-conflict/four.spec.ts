@@ -1,0 +1,173 @@
+import { describe, it, expect, beforeEach } from 'vitest'
+import { resetMeetings, assignToRoom, removeMeetingFromRoom, moveMeeting } from './test-utils'
+import meetings from '../../public/data/four.json'
+
+function assignAllToRoomA() {
+    assignToRoom(meetings[0], 'A')
+    assignToRoom(meetings[1], 'A')
+    assignToRoom(meetings[2], 'A')
+    assignToRoom(meetings[3], 'A')
+}
+
+function assignToRoomAInOrder2A1A4A3A() {
+    assignToRoom(meetings[1], 'A')
+    assignToRoom(meetings[0], 'A')
+    assignToRoom(meetings[3], 'A')
+    assignToRoom(meetings[2], 'A')
+}
+
+describe('handleRoomChange 1 A 2 A 3 A 4 A', () => {
+    beforeEach(() => {
+        resetMeetings(meetings)
+        assignAllToRoomA()
+    })
+
+    it('1 A 2 A 3 A 4 A => 2 x 3 x 4 x', () => {
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(true)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(true)
+    })
+
+    it('1 A 2 A 3 A 4 A -> 1 null => 2 x 3 x', () => {
+        removeMeetingFromRoom(meetings[0])
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(true)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('1 A 2 A 3 A 4 A -> 2 null => 3 x', () => {
+        removeMeetingFromRoom(meetings[1])
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('1 A 2 A 3 A 4 A -> 3 null => 2 x', () => {
+        removeMeetingFromRoom(meetings[2])
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(true)
+        expect(meetings[2].isConflict).toBe(false)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('1 A 2 A 3 A 4 A -> 4 null => 2 x 3 x', () => {
+        removeMeetingFromRoom(meetings[3])
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(true)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('1 A 2 A 3 A 4 A -> 1 B => 2 x 3 x', () => {
+        moveMeeting(meetings[0], 'B')
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(true)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('1 A 2 A 3 A 4 A -> 2 B => 3 x', () => {
+        moveMeeting(meetings[1], 'B')
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('1 A 2 A 3 A 4 A -> 3 B => 2 x', () => {
+        moveMeeting(meetings[2], 'B')
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(true)
+        expect(meetings[2].isConflict).toBe(false)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('1 A 2 A 3 A 4 A -> 4 B => 2 x 3 x', () => {
+        moveMeeting(meetings[3], 'B')
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(true)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+})
+
+describe('handleRoomChange 2 A 1 A 4 A 3 A', () => {
+    beforeEach(() => {
+        resetMeetings(meetings)
+        assignToRoomAInOrder2A1A4A3A()
+    })
+
+    it('2 A 1 A 4 A 3 A => 1 x 3 x', () => {
+        expect(meetings[0].isConflict).toBe(true)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('2 A 1 A 4 A 3 A -> 1 null => 3 x', () => {
+        removeMeetingFromRoom(meetings[0])
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('2 A 1 A 4 A 3 A -> 2 null => 3 x', () => {
+        removeMeetingFromRoom(meetings[1])
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('2 A 1 A 4 A 3 A -> 3 null => 1 x', () => {
+        removeMeetingFromRoom(meetings[2])
+        expect(meetings[0].isConflict).toBe(true)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(false)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('2 A 1 A 4 A 3 A -> 4 null => 1 x 3 x', () => {
+        removeMeetingFromRoom(meetings[3])
+        expect(meetings[0].isConflict).toBe(true)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('2 A 1 A 4 A 3 A -> 1 B => 3 x', () => {
+        moveMeeting(meetings[0], 'B')
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('2 A 1 A 4 A 3 A -> 2 B => 3 x', () => {
+        moveMeeting(meetings[1], 'B')
+        expect(meetings[0].isConflict).toBe(false)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('2 A 1 A 4 A 3 A -> 3 B => 1 x', () => {
+        moveMeeting(meetings[2], 'B')
+        expect(meetings[0].isConflict).toBe(true)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(false)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+
+    it('2 A 1 A 4 A 3 A -> 4 B => 1 x 3 x', () => {
+        moveMeeting(meetings[3], 'B')
+        expect(meetings[0].isConflict).toBe(true)
+        expect(meetings[1].isConflict).toBe(false)
+        expect(meetings[2].isConflict).toBe(true)
+        expect(meetings[3].isConflict).toBe(false)
+    })
+})
