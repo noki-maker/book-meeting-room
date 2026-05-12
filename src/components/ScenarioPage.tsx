@@ -4,17 +4,30 @@ import DataSelector, { DataKey } from './DataSelector'
 import MeetingTable from './MeetingTable'
 import AllConflictManager from '../managers/AllConflictManager'
 import LastConflictManager from '../managers/LastConflictManager'
+import twoData from '../../public/data/two.json'
+import threeFullData from '../../public/data/three-full.json'
+import threeCrossData from '../../public/data/three-cross.json'
+import fourData from '../../public/data/four.json'
 
 const ROOMS = [
   { id: 'A', name: '会议室 A' },
   { id: 'B', name: '会议室 B' },
 ]
 
-const DATA_FILES: Record<DataKey, string> = {
-  two: '/data/two.json',
-  'three-full': '/data/three-full.json',
-  'three-cross': '/data/three-cross.json',
-  four: '/data/four.json',
+const DATA_MAP: Record<DataKey, Meeting[]> = {
+  two: twoData as Meeting[],
+  'three-full': threeFullData as Meeting[],
+  'three-cross': threeCrossData as Meeting[],
+  four: fourData as Meeting[],
+}
+
+function resetMeetings(data: Meeting[]): Meeting[] {
+  return data.map(m => ({
+    ...m,
+    roomId: null,
+    prevRoomId: undefined,
+    isConflict: false,
+  }))
 }
 
 interface ScenarioPageProps {
@@ -27,24 +40,14 @@ function ScenarioPage({ mode }: ScenarioPageProps) {
   )
 
   const [dataKey, setDataKey] = useState<DataKey>('two')
-  const [meetings, setMeetings] = useState<Meeting[]>([])
+  const [meetings, setMeetings] = useState<Meeting[]>(() =>
+    resetMeetings(DATA_MAP['two'])
+  )
   const [refreshKey, setRefreshKey] = useState(0)
 
-  const loadData = useCallback(async (key: DataKey) => {
+  const loadData = useCallback((key: DataKey) => {
     manager.clear()
-    try {
-      const res = await fetch(DATA_FILES[key])
-      const data: Meeting[] = await res.json()
-      const resetData = data.map(m => ({
-        ...m,
-        roomId: null,
-        prevRoomId: undefined,
-        isConflict: false,
-      }))
-      setMeetings(resetData)
-    } catch {
-      console.error('加载数据失败')
-    }
+    setMeetings(resetMeetings(DATA_MAP[key]))
   }, [manager])
 
   useEffect(() => {

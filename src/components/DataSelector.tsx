@@ -1,5 +1,4 @@
 import { Radio } from 'antd'
-import type { DataKey } from './DataSelector'
 import styles from './DataSelector.module.css'
 
 export type DataKey = 'two' | 'three-full' | 'three-cross' | 'four'
@@ -38,4 +37,3 @@ function DataSelector({ value, onChange }: DataSelectorProps) {
 }
 
 export default DataSelector
-export type { DataKey }

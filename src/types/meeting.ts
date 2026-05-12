@@ -9,9 +9,16 @@ export interface Meeting {
   prevRoomId?: string | null
 }
 
+export interface Scschedule {
+  start: string
+  end: string
+  meetingId: string
+}
+
 export interface Room {
   id: string
   name: string
+  scschedules: Scschedule[]
 }
 
 export interface IMeetingManager {
